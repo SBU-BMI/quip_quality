@@ -26,7 +26,8 @@ print imgdirs
 #imgroot = "%s/%s"%(rootdir,imgdirs[7])
 
 ## OR, use this to select an image by name
-imgroot = "%s/%s"%(rootdir,"TCGA-J2-8194-01Z-00-DX1.7700924D-B6AF-46A7-A7D7-B5C17A66C5F7")
+#imgroot = "%s/%s"%(rootdir,"TCGA-J2-8194-01Z-00-DX1.7700924D-B6AF-46A7-A7D7-B5C17A66C5F7")
+imgroot = "%s/%s"%(rootdir,"TCGA-62-A46S-01Z-00-DX1.7A8A6F38-76EA-4F43-BC03-1C42E6787E33")
 
 
 allimgdata = os.listdir(imgroot)
@@ -55,6 +56,18 @@ for f in csvfiles:
     pct_area = 100*total_area/float(tile_area)
     max_pct_area = 100*max_area/float(tile_area)
 
+    # Extract URL components from filename
+    # x pos is between '_x' and '_y', y pos is between '_y' and '-'
+
+    img_end = f.find ('.', f.find('.')+1) #Ends at the second '.'
+    img_id = f[0:img_end]
+    xp = f.find('_x')
+    yp = f.find('_y')
+    zp = f.find('-', yp)
+    x = f[xp+2:yp]
+    y = f[yp+2:zp]
+    url = "http://129.49.249.167/camicroscope/osdCamicroscope.php?tissueId=%s&x=%s&y=%s&zoom=20" % (img_id, x, y)
+
     if obj_count > 0:
 
         #if max_blueStd > 0:
@@ -63,9 +76,10 @@ for f in csvfiles:
 ########
 # Adjust filtering condition and output here:
         #if (max_pct_area>10 or max_pct_area < 0.5) and pct_area>20.0:
-        if (max_pct_area>5) and pct_area>20.0:
-            print "***"
+        if (max_pct_area>2 and max_pct_area<3):
+            #print "***"
             print "Processing tile", f
+            print url
             print "Tile has %s objects"%obj_count
             print "Maximum object area is %s"%max_area
             print "Maximum object area percentage is %s"%max_pct_area
