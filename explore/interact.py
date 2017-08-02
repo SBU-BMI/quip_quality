@@ -14,6 +14,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 #import csv
 
+import matplotlib.image as mpimg
+import string
+
+
 rootdir = "/data/shared/jlogan/wensi20170523/luad"
 
 allfiles = os.listdir(rootdir)
@@ -46,26 +50,29 @@ for f in csvfiles:
     df = pd.read_csv(f, index_col=None, header=0, usecols=range(92))
     #df = pd.read_csv(f, index_col=None, header=0, usecols=[0,1,2,3])
     #df = pd.read_csv(f, index_col=None, header=0)
+    df['file'] = f
     flist.append(df)
 frame = pd.concat(flist)
 
 print "Loaded dataframe containing %i features:"%len(list(frame))
 print list(frame)
 
-frame.plot(kind='scatter', x='PhysicalSize', y='b_IntensityStd')
+tolerance = 5
+fig = plt.figure()
+ax = fig.add_subplot(111)
 
-# Let's try k-means with
-#model = KMeans (n_clusters=6)
-#model.fit (frame)
+df.plot(ax=ax, kind='scatter', x='PhysicalSize', y='b_IntensityStd', picker=tolerance)
 
-#print model.labels_
+def onpick(event):
+    the_file = df['file'][event.ind].values[0]
+    the_file = string.replace(the_file,"features.csv","seg.png")
+    print 'hello from ', the_file 
+    im = mpimg.imread(the_file)
+    imgplot = plt.imshow(im)
+    #plt.show()
 
-# Make a scatter plot
-#cm = np.array(['red','blue','green','orange','yellow','violet'])
-#df.plot(kind='scatter', x='PhysicalSize', y='b_IntensityStd', c=cm[model.labels_])
 
-# Output some mug shots
-
+cid = fig.canvas.callbacks.connect('pick_event', onpick)
 
 plt.show(block=True)
 
