@@ -114,8 +114,10 @@ def onpick(event):
     maxx = maxx - tilex
     maxy = maxy - tiley
 
+    marginx = marginy = 0
+
     #cropped_im = im[minx:maxx, miny:maxy]    
-    cropped_im = im[miny:maxy, minx:maxx]    
+    cropped_im = im[miny-marginy:maxy+marginy, minx-marginx:maxx+marginx]    
 
     fig.add_subplot(122)
     imgplot = plt.imshow(cropped_im)
