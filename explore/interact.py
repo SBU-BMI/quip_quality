@@ -56,7 +56,7 @@ for f in csvfiles:
     #df = pd.read_csv(f, index_col=None, header=0)
     df['file'] = f
     flist.append(df)
-frame = pd.concat(flist)
+frame = pd.concat(flist, ignore_index=True)
 
 print "Loaded dataframe containing %i features:"%len(list(frame))
 print list(frame)
@@ -66,18 +66,29 @@ fig = plt.figure()
 ax = fig.add_subplot(121)
 
 #Plot the entire image
-#frame.plot(ax=ax, kind='scatter', x='PhysicalSize', y='b_IntensityStd', picker=tolerance)
+plotframe = frame
 #    -- OR --
-#Just look at the last tile (df) for speed
-df.plot(ax=ax, kind='scatter', x='PhysicalSize', y='b_IntensityStd', picker=tolerance)
+#Select a tile by index
+#plotframe = flist[10]
+
+plotframe.plot(ax=ax, kind='scatter', x='PhysicalSize', y='Circularity', picker=tolerance)
+
+def getxy(f):
+  xp = f.find('_x')
+  yp = f.find('_y')
+  zp = f.find('-', yp)
+  x = float(f[xp+2:yp])
+  y = float(f[yp+2:zp])
+  return (x,y)
 
 def onpick(event):
-    the_file = df['file'][event.ind].values[0]
-    the_file = string.replace(the_file,"features.csv","seg.png")
-    print 'hello from ', the_file 
+    the_file = plotframe['file'][event.ind].values[0]
+    print ":::", 
+    the_file = string.replace(the_file,"features.csv","seg-overlay.png")
+    #the_file = string.replace(the_file,"features.csv","seg.png")
     im = mpimg.imread(the_file)
 
-    poly_pts = df['Polygon'][event.ind].values[0][1:-1].split(':') # the [1:-1] is to strip the [ and ] from the ends of the string
+    poly_pts = plotframe['Polygon'][event.ind].values[0][1:-1].split(':') # the [1:-1] is to strip the [ and ] from the ends of the string
     # Need min and max of evens, and min and max of odds, then subtract
     # the tile offsets from the filename
     evens = range(0, len(poly_pts), 2)
@@ -106,8 +117,9 @@ def onpick(event):
 
     # Adjust to tile coordinates
 
-    tilex = 45056
-    tiley = 36864
+#    tilex = 45056
+#    tiley = 36864
+    tilex, tiley = getxy(the_file)
 
     minx = minx - tilex
     miny = miny - tiley

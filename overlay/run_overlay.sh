@@ -1,13 +1,17 @@
 #!/bin/bash
 
-filename=$1
-width=$2
-height=$3
-outfile=$4
+set -x
 
-a=`echo $filename | awk -F '.' '{print $1"."$2}'`;
-b=`echo $filename | awk -F '.' '{print $6}'`
+segfile=$1
+svsfile=$2
+width=$3
+height=$4
+outfile=$5
+
+bname=$(basename $segfile)
+
+b=`echo $bname | awk -F '.' '{print $6}'`
 x=`echo $b | awk -F 'x' '{print $2}' | awk -F '_' '{print $1}'`;
 y=`echo $b | awk -F 'y' '{print $2}' | awk -F '-' '{print $1}'`;
 
-/home/tkurc/programs/openslide-340/bin/openslide-write-png $a.svs $x $y 0 $width $height $outfile
+/home/tkurc/programs/openslide-340/bin/openslide-write-png $svsfile $x $y 0 $width $height $outfile
