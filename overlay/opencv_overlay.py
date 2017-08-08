@@ -3,19 +3,20 @@ import cv2
 import sys,os
 from subprocess import call
 
-inpfile=sys.argv[1]
+segfile=sys.argv[1]
+svsfile=sys.argv[2]
 
-fname=os.path.splitext(inpfile)[0]
-tilefile=fname+'-tile.jpg'
+fname=os.path.splitext(segfile)[0]
+tilefile=fname+'-tile.png'
 overfile=fname+'-overlay.jpg'
 
-im = cv2.imread(inpfile)
+im = cv2.imread(segfile)
 height, width, channels = im.shape
 
 w=str(width)
 h=str(height)
 
-call(['bash', 'run_overlay.sh', inpfile, w, h, tilefile])
+call(['bash', 'run_overlay.sh', segfile, svsfile, w, h, tilefile])
 
 tileim = cv2.imread(tilefile)
 
