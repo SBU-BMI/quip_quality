@@ -92,7 +92,7 @@ def getxy(f):
   zp = f.find('-', yp)
   x = float(f[xp+2:yp])
   y = float(f[yp+2:zp])
-  return (x,y)
+  return (int(x),int(y))
 
 def onpick(event):
     the_file = plotframe['file'][event.ind].values[0]
@@ -151,7 +151,7 @@ def onpick(event):
 
 cid = fig.canvas.callbacks.connect('pick_event', onpick)
 
-plt.show()
+plt.show(block=True)
 
 
 
