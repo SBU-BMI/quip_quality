@@ -6,6 +6,7 @@
 from sklearn import datasets
 from sklearn.cluster import KMeans
 import sklearn.metrics as sm
+import sklearn.preprocessing as pre
 
 import numpy as np
 import pandas as pd
@@ -71,11 +72,21 @@ ax = fig.add_subplot(121)
 #Select a tile by index
 plotframe = flist[10]
 
-print plotframe.iloc[:,:91]
+#Filter out the tiny objects (Why doesn't this work??)
+#plotframe = plotframe[plotframe['PhysicalSize']>1000]
+
+#print plotframe
+
+clusterframe = plotframe.copy()
+# Drop columns that won't help with clustering
+clusterframe = clusterframe.drop (['objID', 'FeretDiameter', 'Polygon', 'file'], axis=1)
+
+clusterframe = pd.DataFrame(pre.StandardScaler().fit_transform(clusterframe), columns=clusterframe.columns)
+
 
 # Let's try k-means with
-model = KMeans (n_clusters=6)
-model.fit (plotframe.iloc[:,:91])
+model = KMeans (n_clusters=4)
+model.fit (clusterframe)
 
 print model.labels_
 
@@ -84,9 +95,13 @@ cm = np.array(['red','blue','green','orange','yellow','violet'])
 #df.plot(kind='scatter', x='PhysicalSize', y='b_IntensityStd', c=cm[model.labels_])
 
 
-plotframe.plot(ax=ax, kind='scatter', x='PhysicalSize', y='Circularity', picker=tolerance, c=cm[model.labels_])
+#plotframe.plot(ax=ax, kind='scatter', x='PhysicalSize', y='objID', picker=tolerance, c=cm[model.labels_])
+#plotframe.plot(ax=ax, kind='scatter', x='PhysicalSize', y='Roundness', picker=tolerance, c=cm[model.labels_])
+#plotframe.plot(ax=ax, kind='scatter', x='PhysicalSize', y='r_cytoGradientMean', picker=tolerance, c=cm[model.labels_])
+#plotframe.plot(ax=ax, kind='scatter', x='PhysicalSize', y='r_IntensityEntropy', picker=tolerance, c=cm[model.labels_])
+plotframe.plot(ax=ax, kind='scatter', x='PhysicalSize', y='StdR', picker=tolerance, c=cm[model.labels_])
 
-def getxy(f):
+def getxy(f): # extract x and y from filename
   xp = f.find('_x')
   yp = f.find('_y')
   zp = f.find('-', yp)
@@ -130,8 +145,6 @@ def onpick(event):
 
     # Adjust to tile coordinates
 
-#    tilex = 45056
-#    tiley = 36864
     tilex, tiley = getxy(the_file)
 
     minx = minx - tilex
