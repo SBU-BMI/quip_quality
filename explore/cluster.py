@@ -21,7 +21,7 @@ plt.ion()
 import matplotlib.image as mpimg
 import string
 
-rootdir = "/data/shared/jlogan/wensi20170523/luad"
+rootdir = "/data10/shared/jlogan/wensi20170523/luad"
 
 allfiles = os.listdir(rootdir)
 imgdirs = [f for f in allfiles if not f.endswith(".svs") ]
