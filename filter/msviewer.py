@@ -133,6 +133,8 @@ class Window(QtGui.QWidget):
         id = self.tileList.currentItem().data(id_role).toInt()[0] #I'm not sure why toInt returns an (i, True) tuple
         print id
 
+        size = int(self.results.iloc[id]["AreaInPixels"]) 
+
         fname = self.results.iloc[id]['fname']
 
         rawpoly = self.results.iloc[id]['Polygon']
@@ -161,8 +163,10 @@ class Window(QtGui.QWidget):
 
         #print adjpts
 
+        line_width = 3 + (size / 200000) # Need a slightly wider line for large objects
+
         draw = ImageDraw.Draw(imgPIL)
-        draw.line(adjpts, fill=(0,255,0), width=3)
+        draw.line(adjpts, fill=(0,255,0), width=line_width)
         #draw.line((0,0,200,200), fill=(0,128,0), width=3)
         del draw
 
